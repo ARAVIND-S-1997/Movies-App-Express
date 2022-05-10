@@ -1,57 +1,21 @@
-// connecting express
-
-// const express=require("express");
-dotenv.config(); 
 import express from "express"
-import cors from"cors"
+import cors from "cors"
 import dotenv from "dotenv";
-import { MongoClient } from "mongodb";
+import mongoconnection from "./mongooseConnection.js"
+import { myroutes } from "./routes/myRoutes.js"
 
 
-const server = express();
+dotenv.config();
+
+await mongoconnection();
+const app = express();
 const PORT = process.env.PORT;
-server.listen(PORT, () => { console.log("started in", PORT) });
-
-// connecting mongodb
+app.listen(PORT, () => { console.log("started in", PORT) });
 
 
-// const {MongoClient}=require("mongodb");
-// const mongo_url="mongodb://localhost"
-
-
-const mongo_url = process.env.mongo_url;
-async function createconnection() {
-  const client = new MongoClient(mongo_url);
-  await client.connect();
-  console.log("Mongodb connected");
-  return client;
-}
-// createconnection();
-export const client = await createconnection();
-
-
-server.use(express.json());
-server.use(cors());
-
-// import { 
-//   allMoviesDataFunction, 
-//   fetchMoviesByIdfunction, 
-//   sendParticularMovieDataFunction, 
-//   deleteAllMovieDataFunction, 
-//   deleteParticularMovieDataFunction, 
-//   updateParticularMovieDataFunction } from "./functionFile.js";
-import { moviesRouter } from "./router/movies.js";
-import { usersRouter } from "./router/users.js";
-
-  
-
-
-server.get("/", (request, response) => {
-  response.send("Hai there aravind.How are you")
-});
-
-server.use("/movies",moviesRouter)
-server.use("/users",usersRouter)
+app.use(express.json());
+app.use(cors());
+app.use("/movies", myroutes);
 
 
 
